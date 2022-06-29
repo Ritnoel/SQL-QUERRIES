@@ -1,0 +1,412 @@
+set search_path to sales_transactions;
+
+SELECT * FROM orders;
+
+SELECT * FROM sales_reps;
+
+SELECT * FROM region;
+
+SELECT id, account_id, groceries_qty 
+FROM orders;
+
+SELECT id, name
+FROM sales_reps;
+
+SELECT id, name, primary_poc
+FROM accounts;
+
+SELECT id, name
+FROM sales_reps
+LIMIT 10;
+
+SELECT id, name, primary_poc
+FROM accounts
+LIMIT 5;
+
+SELECT * 
+FROM ORDERS;
+
+--ORDER BY--
+SELECT id, account_id,total_usd
+FROM orders
+ORDER BY total_usd DESC
+LIMIT 5;
+
+SELECT *
+FROM accounts
+ORDER BY name DESC
+LIMIT 5;
+
+SELECT *
+FROM orders
+ORDER BY groceries_qty DESC, drinks_qty ASC;
+
+SELECT *
+FROM orders
+WHERE drinks_qty = 0
+ORDER BY groceries_qty DESC;
+
+--WHERE CLAUSE--
+
+SELECT *
+FROM orders
+WHERE groceries_usd > 1000
+ORDER BY groceries_usd DESC;
+
+SELECT id, total, total_usd
+FROM orders
+WHERE total_usd <= 1000
+ORDER BY total_usd DESC;
+
+SELECT *
+FROM web_events
+WHERE channel = 'facebook';
+
+SELECT DISTINCT channel
+FROM web_events;
+
+SELECT *
+FROM accounts
+WHERE name LIKE 'S%'
+ORDER BY website;
+
+SELECT *
+FROM accounts
+WHERE name LIKE '%e'
+ORDER BY name DESC;
+
+SELECT *
+FROM accounts
+WHERE name LIKE '%one%';
+
+SELECT *
+FROM accounts
+WHERE name LIKE 'De%';
+
+--IN OPERATOR--
+SELECT name, primary_poc, sales_rep_id
+FROM accounts
+WHERE name IN ('Walmart', 'Target', 'Nordstrom')
+ORDER BY primary_poc DESC;
+
+
+SELECT id, account_id, occurred_at, channel
+FROM web_events
+WHERE channel IN ('organic', 'adwords')
+ORDER BY occurred_at;
+
+
+--NOT OPERATOR--
+SELECT stationeries_usd
+FROM orders
+WHERE stationeries_usd != 0
+ORDER BY stationeries_usd;
+
+select stationeries_usd
+from orders;
+
+select id, occurred_at, channel
+from web_events
+where channel not in ('facebook', 'twitter');
+
+select name from accounts
+where name not like 'A%' ;
+
+--AND OPERATOR--
+
+SELECT *
+FROM orders
+WHERE stationeries_qty > 1000 
+AND account_id IN (1001, 2671, 3111)
+;
+
+
+SELECT *
+FROM web_events
+WHERE channel IN ('Facebook', 'Twitter') 
+AND account_id = 1001;
+
+
+SELECT id, name, region_id
+FROM sales_reps
+WHERE region_id = 1 
+AND name LIKE'_____ B%';
+
+--BETWEEN OPERATOR--
+SELECT occurred_at, drinks_qty
+FROM orders
+WHERE drinks_qty BETWEEN 24 AND 29
+ORDER BY drinks_qty DESC;
+
+SELECT occurred_at
+from web_events;
+
+
+SELECT *
+FROM web_events 
+WHERE channel IN ('organic', 'adwords')
+AND occurred_at BETWEEN '2016-01-01' AND '2016-12-31'
+ORDER BY occurred_at DESC;
+
+
+SELECT id,drinks_qty, stationeries_qty
+FROM orders
+WHERE drinks_qty > 4000 OR stationeries_qty >4000;
+
+SELECT *
+FROM orders
+WHERE groceries_qty = 0
+AND (drinks_qty  > 1000 OR stationeries_qty > 1000);
+
+
+--JOINS---
+
+SELECT orders.*, accounts.*
+FROM orders INNER JOIN accounts
+ON orders.account_id = accounts.id;
+
+SELECT * FROM ORDERS
+
+SELECT * FROM ACCOUNTS
+
+
+SELECT  acc.name, o.occurred_at, o.total_usd
+FROM accounts AS acc FULL JOIN orders AS o
+ON o.account_id = acc.id;
+
+
+SELECT region.*, sales_reps.*
+FROM sales_reps FULL OUTER JOIN region
+ON sales_reps.region_id = region.id;
+
+SELECT * FROM REGION;
+
+SELECT name FROM SALES_REPS;
+
+SELECT * FROM ORDERS
+
+SELECT s.name, a.name, o.id, o.drinks_qty
+FROM sales_reps AS s JOIN accounts AS a
+ON s.id = a.sales_rep_id
+JOIN orders AS o
+ON a.id = o.account_id
+WHERE drinks_qty = 0;
+
+
+select name from accounts;
+
+
+SELECT w.occurred_at, a.primary_poc, a.name, w.channel
+FROM web_events AS w JOIN accounts AS a 
+ON w.account_id = a.id
+WHERE a.name = 'Walmart';
+
+
+--AGGREGATES FUNCTIONS---
+select * from accounts
+
+--COUNT--
+SELECT COUNT(*)
+FROM accounts;
+
+SELECT COUNT(*)
+FROM orders;
+
+SELECT COUNT(*)
+FROM region;
+
+SELECT COUNT(*)
+FROM sales_reps;
+
+SELECT COUNT(*)
+FROM web_events;
+
+--SUM--
+select * from orders;
+
+
+SELECT drinks_usd, groceries_usd, groceries_usd + drinks_usd AS groceries_drinks_usd
+FROM orders;
+
+SELECT SUM(drinks_qty)
+FROM orders;
+
+SELECT SUM(stationeries_usd)
+FROM orders;
+
+SELECT MIN(drinks_qty)
+FROM orders;
+
+SELECT MAX(stationeries_qty)
+FROM orders;
+
+SELECT MIN(occurred_at)
+FROM orders;
+
+SELECT MAX(occurred_at)
+FROM web_events;
+
+---GROUP BY and HAVING---
+SELECT * FROM orders;
+
+SELECT account_id, SUM(total_usd)
+FROM orders
+GROUP BY account_id;
+
+
+select * FROM web_events
+
+SELECT DISTINCT(CHANNEL) FROM WEB_EVENTS;
+
+SELECT channel, COUNT(channel)
+FROM web_events
+GROUP BY channel
+ORDER BY COUNT(channel) DESC;
+
+SELECT account_id, COUNT(account_id) AS number_of_orders
+FROM orders
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 4;
+
+SELECT * FROM orders ;
+
+
+SELECT account_id, SUM(total)
+FROM orders
+GROUP BY 1
+HAVING SUM(total) > 40000;
+
+SELECT account_id
+FROM orders
+WHERE account_id = 1001;
+
+
+--ANALYSIS--
+SELECT * from accounts
+
+select * from orders
+
+
+SELECT accounts.name, orders.total
+FROM orders INNER JOIN accounts
+ON orders.account_id = accounts.id
+ORDER BY orders.total DESC
+LIMIT 1;
+
+SELECT a.name, SUM(o.total_usd)
+FROM accounts AS a INNER JOIN orders AS o
+ON a.id = o.account_id
+GROUP BY 1;
+
+select * from accounts
+
+select * from web_events
+
+SELECT a.primary_poc, MIN(w.occurred_at)
+FROM accounts AS a INNER JOIN web_events AS w
+ON a.id = w.account_id
+GROUP BY 1
+ORDER BY 2 ASC
+LIMIT 1;
+
+SELECT r.name, COUNT(s.name)
+FROM region AS r INNER JOIN sales_reps AS s
+ON r.id = s.region_id
+GROUP BY 1
+ORDER BY 2 ASC;
+
+SELECT COUNT(w.channel), w.channel, r.name 
+FROM web_events AS w INNER JOIN accounts AS a
+ON w.account_id = a.id
+JOIN sales_reps AS s
+ON a.sales_rep_id = s.id
+JOIN region AS r
+ON s.region_id = r.id
+GROUP BY 2,3
+ORDER BY 1 DESC
+
+
+select name from accounts
+where name 
+
+SELECT a.name, MIN(o.total_usd)
+FROM accounts AS a JOIN orders AS o
+ON a.id = o.account_id
+GROUP BY 1
+ORDER BY 2;
+
+--HAVING CLAUSE--
+SELECT s.name, COUNT(a.name)
+FROM sales_reps AS s JOIN accounts AS a
+ON s.id = a.sales_rep_id
+GROUP BY 1
+HAVING COUNT(a.name) > 5;
+
+SELECT a.name, SUM(o.total_usd)
+FROM accounts AS a JOIN orders AS o
+ON a.id = o.account_id
+GROUP BY 1
+HAVING SUM(o.total_usd) < 1000;
+
+SELECT a.name, w.channel, COUNT (w.channel)
+FROM accounts AS a JOIN web_events AS w
+ON a.id = w.account_id
+WHERE w.channel = 'facebook'
+GROUP BY 1,2
+HAVING COUNT(w.channel) > 6
+ORDER BY 3;
+
+
+SELECT s.name, SUM(o.total_usd)
+FROM sales_reps AS s JOIN accounts AS a
+ON s.id = a.sales_rep_id
+JOIN orders AS o
+ON a.id = o.account_id
+GROUP BY 1
+HAVING SUM(o.total_usd) > 800000;
+
+
+SELECT a.name, ROUND(AVG(o.drinks_usd), 2) AS avg_drinks, 
+ROUND(AVG(o.stationeries_usd), 2) AS avg_stationeries, AVG(o.groceries_usd) AS avg_groceries
+FROM accounts AS a JOIN orders AS o
+ON a.id = o.account_id
+GROUP BY 1
+
+--DATE TRUNC FUNCTION
+SELECT DATE_TRUNC('month', occurred_at), COUNT(occurred_at)
+FROM web_events
+GROUP BY 1;
+
+SELECT DATE_TRUNC('year', occurred_at), SUM(total_usd)
+FROM orders
+GROUP BY 1;
+
+SELECT DATE_TRUNC('day', occurred_at), SUM(total_usd)
+FROM orders
+GROUP BY 1
+ORDER BY 2 DESC;
+
+--DATE PART FUNCTION
+
+SELECT DATE_PART('month',occurred_at), SUM(total_usd)
+FROM orders
+GROUP BY 1
+
+SELECT DATE_part('dow', occurred_at) AS day_of_the_week, SUM(total_usd)
+FROM orders
+GROUP BY 1
+
+SELECT DATE_PART('year', occurred_at) AS year, DATE_PART('month', occurred_at) AS month, SUM(total)
+FROM orders
+GROUP BY 1,2;
+
+select * from orders;
+
+SELECT *,
+CASE
+WHEN drinks_qty > 1000 THEN 'fantastic'
+WHEN drinks_qty < 6 THEN 'Poorly_received'
+ELSE 'Avoid_at_all_costs'
+END
+FROM orders;

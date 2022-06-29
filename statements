@@ -1,0 +1,5 @@
+SELECT * FROM orders;
+
+SELECT * FROM sales_reps;
+
+SELECT * FROM region;
